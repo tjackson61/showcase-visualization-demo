@@ -13,7 +13,11 @@ ui <- function() {
       shiny::selectInput("sort_type", "Sort Type", choices = c("None", "Desc", "Asc")),
       shiny::actionButton("submit", "Submit")
     ),
-    shiny::fluidRow(plotly::plotlyOutput("chart"))
+    shiny::fluidRow(
+      shiny::wellPanel(
+        plotly::plotlyOutput("chart")
+      )
+    )
   )
 }
 

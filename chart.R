@@ -1,9 +1,11 @@
 make_chart <- function(type = "bar", sort_data = TRUE, top_n = 10) {
   source("utils/get_csv_data.R") # comment out once query functionality working
+  source("utils/exec_query.R")
   source("utils/get_query.R")
 
-    flight_data <- get_csv_data()
-  
+  flight_data <- exec_query(sql_query)
+
+
   # parameter control
   if (sort_data) {
     flight_data <- flight_data |>
@@ -12,12 +14,10 @@ make_chart <- function(type = "bar", sort_data = TRUE, top_n = 10) {
       # top N functionality
       dplyr::slice_head(n = top_n)
   }
-
+  exec_query
   result <- flight_data |>
     plotly::plot_ly() |>
     plotly::add_trace(x = ~CRAFT_MODEL_NAME, y = ~AVERAGE_TOTAL_DURATION, type = type)
 
   return(result)
 }
-
-

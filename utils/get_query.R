@@ -1,4 +1,5 @@
-get_query <- function(query) {
-  source("connection.R")
-  pool::dbGetQuery(app_pool, dplyr::sql(query))
+sql_query_fn <- function(query) {
+  readr::read_file(list.files("./query/", full.names = TRUE)) |> dplyr::sql()
 }
+
+sql_query <- sql_query_fn()
