@@ -1,4 +1,4 @@
-make_chart <- function(data, dimension, meta, 
+make_chart <- function(data, dimension, x_axis_meta, 
                        type = "bar", sort_data = TRUE, top_n = 104) {
   # Add data
   data <- get_query() |>
@@ -17,18 +17,17 @@ make_chart <- function(data, dimension, meta,
     )
 
   # Plotly Layout
-  result <- result |> make_layout(dimension, meta)
-  print(dimension)
+  result <- result |> make_layout(dimension, x_axis_meta)
   return(result)
 }
 
 
 make_layout <- function(result, dimension, meta) {
-  title <- names(meta)[meta == dimension]
+  
   result |>
     layout(
       xaxis = list(
-        title = title,
+        title = axis_titles(dimension, meta),
         categoryorder = "array",
         categoryarray = ~ reorder(
           .data[[dimension]],
@@ -39,3 +38,6 @@ make_layout <- function(result, dimension, meta) {
 }
 
 
+axis_titles <- function(dimension, meta) {
+  names(meta)[meta == dimension]
+}

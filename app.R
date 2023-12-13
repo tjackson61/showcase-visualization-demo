@@ -28,7 +28,7 @@ ui <- function() {
       ),
       shiny::selectizeInput(
         "xaxis",
-        "X Axis Category",
+        "Category Type",
         choices = DIMENSION_CHOICES
       ),
       shiny::selectizeInput(
