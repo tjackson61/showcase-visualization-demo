@@ -18,12 +18,13 @@ inputUI <- function(id) {
       "yaxis",
       "Measure Type",
       choices = MEASURE_CHOICES
-    ),
-    shiny::selectizeInput(
-      "aggregate",
-      "Aggregate Type",
-      choices = AGGREGATE_CHOICES
     )
+    # ,
+    # shiny::selectizeInput(
+    #   "aggregate",
+    #   "Aggregate Type",
+    #   choices = AGGREGATE_CHOICES
+    # )
   )
 }
 
