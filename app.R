@@ -3,12 +3,19 @@ library(plotly)
 library(readr)
 library(pool)
 library(forcats)
-
+source("utils/exec_query.R")
+source("utils/get_query.R")
 SORT_TYPE_CHOICES <- c("None", "Desc", "Asc")
+DIMENSION_CHOICES <- list(
+  `Aircraft Manufacturer` = "CRAFT_MFR_NAME",
+  `Aircraft Model Name` = "CRAFT_MODEL_NAME",
+  `Aircraft Engine Type` = "CRAFT_ENGINE_TYPE",
+  `Airline Name` = "LINE_FULL_NAME",
+  `Airline Size Category` = "LINE_SIZE_CATEGORY"
+)
 
 ui <- function() {
   shiny::fluidPage(
-
     # Input Panel -------------------------------------------------------------
     shiny::inputPanel(
       shiny::numericInput(
@@ -19,16 +26,10 @@ ui <- function() {
         max = 15,
         step = 1
       ),
-      shiny::selectInput(
-        "sort_type",
-        "Sort Type",
-        choices = SORT_TYPE_CHOICES
-      ),
-      shiny::varSelectInput(
+      shiny::selectizeInput(
         "xaxis",
         "X Axis Category",
-        data = exec_query(sql_query)
-        # make different query to call only dimensions
+        choices = DIMENSION_CHOICES
       ),
       shiny::selectizeInput(
         "value_filter",
@@ -45,50 +46,16 @@ ui <- function() {
   )
 }
 
-
 server <- function(input, output, session) {
   source("chart.R")
-  source("utils/exec_query.R")
-  source("utils/get_query.R")
-
-  flight_data <- reactive(exec_query(sql_query))
-
 
   # Event Listeners ---------------------------------------------------------
-  observeEvent(input$xaxis,
-    {
-      shiny::updateVarSelectInput(
-        session,
-        "xaxis",
-        data = flight_data()
-      )
-    },
-    once = TRUE
-  )
-
-  observeEvent(input$xaxis, {
-    # 
-    select_choices <- flight_data() |>
-      select(input$xaxis) |>
-      unique()
-    
-    # Update using the reactive unique selected column
-    shiny::updateSelectizeInput(
-      session,
-      "value_filter",
-      choices = select_choices
-    )
-  })
 
 
 
   # Output ------------------------------------------------------------------
   output$chart <- plotly::renderPlotly({
-    # data <- flight_data() |>
-    #   filter(CRAFT_MODEL_NAME == input$value_filter) |>
-    #   select(input$value_filter)
-    data <- flight_data()
-    make_chart(data, sort_data = TRUE, top_n = input$topn)
+    make_chart(flight_data(), input$xaxis, sort_data = TRUE, top_n = input$topn)
   })
 }
 
