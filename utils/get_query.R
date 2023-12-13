@@ -9,7 +9,7 @@ get_query <- function(path = "./query/") {
 inject_parameters <- function(query, dimension, measure) {
   dimension <- glue::glue("{dimension}")
 
-  sqlInterpolate(
+  DBI::sqlInterpolate(
     DBI::ANSI(),
     query,
     dimension = DBI::dbQuoteIdentifier(DBI::ANSI(), dimension),

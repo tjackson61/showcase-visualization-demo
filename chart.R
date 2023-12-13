@@ -6,25 +6,27 @@ make_chart <- function(data, dimension, measure, x_axis_meta, y_axis_meta,
     exec_query()
 
   # Plotly Figure
-  result <- data |>
-    arrange(desc(.data[[measure]])) |>
+  fig <- data |>
+    dplyr::arrange(desc(.data[[measure]])) |>
     dplyr::slice_head(n = top_n) |>
     plotly::plot_ly() |>
     plotly::add_trace(
       x = ~ .data[[dimension]],
       y = ~ .data[[measure]],
-      type = type
+      text = ~ round(.data[[measure]], digits = 2),
+      type = type,
+      textposition = "inside"
     )
 
   # Plotly Layout
-  result <- result |> make_layout(dimension, measure, x_axis_meta, y_axis_meta)
-  return(result)
+  fig <- fig |> make_layout(dimension, measure, x_axis_meta, y_axis_meta)
+  return(fig)
 }
 
 
 make_layout <- function(
-    result, dimension, measure, x_axis_meta, y_axis_meta) {
-  result |>
+    fig, dimension, measure, x_axis_meta, y_axis_meta) {
+  fig |>
     layout(
       xaxis = list(
         title = axis_titles(dimension, x_axis_meta),
@@ -44,4 +46,3 @@ make_layout <- function(
 axis_titles <- function(dimension, meta) {
   names(meta)[meta == dimension]
 }
-
