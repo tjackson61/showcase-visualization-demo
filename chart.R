@@ -1,12 +1,11 @@
 make_chart <- function(data, dimension,
                        type = "bar", sort_data = TRUE, top_n = 10) {
-  # Call helper functions
-  # get query from ./query path
-  # inject ?dimension into cte from get_query()
-  data <- inject_parameters(get_query(), dimension) |> 
+  # Add data
+  data <- get_query() |>
+    inject_parameters(dimension) |>
     exec_query()
-  
-  # pass data into resulting plotly object
+
+  # Plotly Figure
   result <- data |>
     arrange(desc(AVERAGE_TOTAL_DURATION)) |>
     dplyr::slice_head(n = top_n) |>
@@ -15,16 +14,25 @@ make_chart <- function(data, dimension,
       x = ~ .data[[dimension]],
       y = ~AVERAGE_TOTAL_DURATION,
       type = type
-    ) |>
+    )
+
+  # Plotly Layout
+  result <- result |> make_layout(dimension)
+  print(dimension)
+  return(result)
+}
+
+
+make_layout <- function(result, dimension) {
+  result |>
     layout(
       xaxis = list(
+        title = dimension,
         categoryorder = "array",
         categoryarray = ~ reorder(
           .data[[dimension]],
           AVERAGE_TOTAL_DURATION
         )
       )
-  )
-
-  return(result)
+    )
 }
