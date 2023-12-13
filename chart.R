@@ -1,5 +1,5 @@
-make_chart <- function(data, dimension,
-                       type = "bar", sort_data = TRUE, top_n = 10) {
+make_chart <- function(data, dimension, meta, 
+                       type = "bar", sort_data = TRUE, top_n = 104) {
   # Add data
   data <- get_query() |>
     inject_parameters(dimension) |>
@@ -17,17 +17,18 @@ make_chart <- function(data, dimension,
     )
 
   # Plotly Layout
-  result <- result |> make_layout(dimension)
+  result <- result |> make_layout(dimension, meta)
   print(dimension)
   return(result)
 }
 
 
-make_layout <- function(result, dimension) {
+make_layout <- function(result, dimension, meta) {
+  title <- names(meta)[meta == dimension]
   result |>
     layout(
       xaxis = list(
-        title = dimension,
+        title = title,
         categoryorder = "array",
         categoryarray = ~ reorder(
           .data[[dimension]],
@@ -36,3 +37,5 @@ make_layout <- function(result, dimension) {
       )
     )
 }
+
+

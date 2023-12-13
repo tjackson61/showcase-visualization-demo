@@ -55,7 +55,7 @@ server <- function(input, output, session) {
 
   # Output ------------------------------------------------------------------
   output$chart <- plotly::renderPlotly({
-    make_chart(flight_data(), input$xaxis, sort_data = TRUE, top_n = input$topn)
+    make_chart(flight_data(), input$xaxis, DIMENSION_CHOICES, sort_data = TRUE, top_n = input$topn)
   })
 }
 
